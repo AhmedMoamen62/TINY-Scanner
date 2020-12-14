@@ -61,7 +61,7 @@ class Lexer(object):
                 end = m.end()
                 if start != last_end:
                     # skipped over text to find the next token implies that there was unrecognizable text or an "error token"
-                    text = self.text[last_end:start]
+                    text = text[last_end:start]
                     token = Token('ERROR', text)
                     yield token
                 last_end = end
