@@ -12,11 +12,17 @@ class Lexer(object):
     END = r'(?P<END>\bend\b)'
     REPEAT = r'(?P<REPEAT>\brepeat\b)'
     UNTIL = r'(?P<UNTIL>\buntil\b)'
-    OPERATOR = r'(?P<OPERATOR>(?:[+*/=<>-]|:=))'
+    PLUS = r'(?P<PLUS>\+)'
+    MINUS = r'(?P<MINUS>\-)'
+    MULTIPLICATION = r'(?P<MULTIPLICATION>\*)'
+    DIVISION = r'(?P<DIVISION>\/)'
+    GREATER = r'(?P<GREATER>\>)'
+    LESS = r'(?P<LESS>\<)'
+    ASSIGN = r'(?P<ASSIGN>:=)'
     LPAREN = r'(?P<LPAREN>\()'
     RPAREN = r'(?P<RPAREN>\))'
     IDENTIFIER = r'(?P<IDENTIFIER>[a-z]+)'
-    INTEGER = r'(?P<INTEGER>\d+)'
+    INTEGER = r'(?P<NUMBER>\d+)'
     SEMICOLON = r'(?P<SEMICOLON>;)'
 
     regex = re.compile('|'.join([
@@ -30,7 +36,13 @@ class Lexer(object):
         END,
         REPEAT,
         UNTIL,
-        OPERATOR,
+        PLUS,
+        MINUS,
+        MULTIPLICATION,
+        DIVISION,
+        GREATER,
+        LESS,
+        ASSIGN,
         LPAREN,
         RPAREN,
         IDENTIFIER,
