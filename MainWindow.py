@@ -4,6 +4,7 @@ from PySide2.QtCore import Qt
 from PySide2 import QtGui
 from TINY_editor import TINY_Editor
 from Scanner_Output import Scanner_Output
+from Lexer import Lexer
 
 class MainWindow(QWidget):
 
@@ -35,6 +36,22 @@ class MainWindow(QWidget):
         self.vbox.addWidget(self.gpOut)
         self.vbox.setAlignment(Qt.AlignCenter | Qt.AlignTop)
         self.setLayout(self.vbox)
+
+        self._start_communications()
+
+    def _start_communications(self):
+        self.runButton.clicked.connect(self._scan)
+
+    def _scan(self):
+        self.scanner_out.setPlainText("")
+        text = self.editor.toPlainText()
+        scanner = Lexer(text)
+        while True:
+            token = scanner.next_token()
+            if token.type == 'EOF':
+                break
+            self.scanner_out.appendPlainText(token.value + " , " + token.type)
+
 
     def create_grid(self):
         # make group box with headline then add the gridlayout to it
