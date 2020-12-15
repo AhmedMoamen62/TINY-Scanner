@@ -3,7 +3,7 @@ import re, collections
 class Lexer(object):
 
     WHITESPACE = r'(?P<WHITESPACE>\s+)'
-    COMMENT = r'(?P<Comment>{[^}]*})'
+    COMMENT = r'(?P<COMMENT>{[^}]*})'
     READ = r'(?P<READ>\bread\b)'
     WRITE = r'(?P<WRITE>\bwrite\b)'
     IF = r'(?P<IF>\bif\b)'
@@ -12,10 +12,16 @@ class Lexer(object):
     END = r'(?P<END>\bend\b)'
     REPEAT = r'(?P<REPEAT>\brepeat\b)'
     UNTIL = r'(?P<UNTIL>\buntil\b)'
-    OPERATOR = r'(?P<OPERATOR>(?:[+*/<>-]|:=))'
-    IDENTIFIER = r'(?P<Identifier>[a-z]+)'
-    NUMBER = r'(?P<Number>\d+)'
-    SEMICOLON = r'(?P<Semicolon>;)'
+    PLUS = r'(?P<PLUS>\+)'
+    MINUS = r'(?P<MINUS>\-)'
+    MULTIPLICATION = r'(?P<MULTIPLICATION>\*)'
+    DIVISION = r'(?P<DIVISION>\/)'
+    GREATER = r'(?P<GREATER>\>)'
+    SMALLER = r'(?P<SMALLER>\<)'
+    ASSIGN = r'(?P<ASSIGN>:=)'
+    IDENTIFIER = r'(?P<IDENTIFIER>[a-z]+)'
+    NUMBER = r'(?P<NUMBER>\d+)'
+    SEMICOLON = r'(?P<SEMICOLON>;)'
 
     regex = re.compile('|'.join([
         WHITESPACE,
@@ -28,7 +34,13 @@ class Lexer(object):
         END,
         REPEAT,
         UNTIL,
-        OPERATOR,
+        PLUS,
+        MINUS,
+        MULTIPLICATION,
+        DIVISION,
+        GREATER,
+        SMALLER,
+        ASSIGN,
         IDENTIFIER,
         NUMBER,
         SEMICOLON
@@ -46,15 +58,15 @@ class Lexer(object):
                 if start != last_end:
                     # skipped over text to find the next token implies that there was unrecognizable text or an "error token"
                     text = text[last_end:start]
-                    token = Token('Error', text)
+                    token = Token('ERROR', text)
                     yield token
                 last_end = end
                 token = Token(m.lastgroup, m.group())
                 if token.type != 'WHITESPACE':
-                    if token.type == "READ" or token.type == "WRITE" or token.type == "IF" or token.type == "THEN" or token.type == "ELSE" or token.type == "END" or token.type == "REPEAT" or token.type == "UNTIL":
-                        token = Token('Reserved Word', token.value)
-                    elif token.type == "OPERATOR":
-                        token = Token('Special Symbol', token.value)
+                    # if token.type == "READ" or token.type == "WRITE" or token.type == "IF" or token.type == "THEN" or token.type == "ELSE" or token.type == "END" or token.type == "REPEAT" or token.type == "UNTIL":
+                    #     token = Token('Reserved Word', token.value)
+                    # elif token.type == "OPERATOR":
+                    #     token = Token('Special Symbol', token.value)
                     yield token
             yield Token('EOF', '<end-of-file>')
 
