@@ -3,7 +3,7 @@ import re, collections
 class Lexer(object):
 
     WHITESPACE = r'(?P<WHITESPACE>\s+)'
-    COMMENT = r'(?P<COMMENT>{[^}]*})'
+    COMMENT = r'(?P<Comment>{[^}]*})'
     READ = r'(?P<READ>\bread\b)'
     WRITE = r'(?P<WRITE>\bwrite\b)'
     IF = r'(?P<IF>\bif\b)'
@@ -12,18 +12,10 @@ class Lexer(object):
     END = r'(?P<END>\bend\b)'
     REPEAT = r'(?P<REPEAT>\brepeat\b)'
     UNTIL = r'(?P<UNTIL>\buntil\b)'
-    PLUS = r'(?P<PLUS>\+)'
-    MINUS = r'(?P<MINUS>\-)'
-    MULTIPLICATION = r'(?P<MULTIPLICATION>\*)'
-    DIVISION = r'(?P<DIVISION>\/)'
-    GREATER = r'(?P<GREATER>\>)'
-    LESS = r'(?P<LESS>\<)'
-    ASSIGN = r'(?P<ASSIGN>:=)'
-    LPAREN = r'(?P<LPAREN>\()'
-    RPAREN = r'(?P<RPAREN>\))'
-    IDENTIFIER = r'(?P<IDENTIFIER>[a-z]+)'
-    INTEGER = r'(?P<NUMBER>\d+)'
-    SEMICOLON = r'(?P<SEMICOLON>;)'
+    OPERATOR = r'(?P<OPERATOR>(?:[+*/<>-]|:=))'
+    IDENTIFIER = r'(?P<Identifier>[a-z]+)'
+    NUMBER = r'(?P<Number>\d+)'
+    SEMICOLON = r'(?P<Semicolon>;)'
 
     regex = re.compile('|'.join([
         WHITESPACE,
@@ -36,17 +28,9 @@ class Lexer(object):
         END,
         REPEAT,
         UNTIL,
-        PLUS,
-        MINUS,
-        MULTIPLICATION,
-        DIVISION,
-        GREATER,
-        LESS,
-        ASSIGN,
-        LPAREN,
-        RPAREN,
+        OPERATOR,
         IDENTIFIER,
-        INTEGER,
+        NUMBER,
         SEMICOLON
         ]))
 
@@ -62,11 +46,15 @@ class Lexer(object):
                 if start != last_end:
                     # skipped over text to find the next token implies that there was unrecognizable text or an "error token"
                     text = text[last_end:start]
-                    token = Token('ERROR', text)
+                    token = Token('Error', text)
                     yield token
                 last_end = end
                 token = Token(m.lastgroup, m.group())
-                if token.type != 'WHITESPACE' and token.type != 'COMMENT':
+                if token.type != 'WHITESPACE':
+                    if token.type == "READ" or token.type == "WRITE" or token.type == "IF" or token.type == "THEN" or token.type == "ELSE" or token.type == "END" or token.type == "REPEAT" or token.type == "UNTIL":
+                        token = Token('Reserved Word', token.value)
+                    elif token.type == "OPERATOR":
+                        token = Token('Special Symbol', token.value)
                     yield token
             yield Token('EOF', '<end-of-file>')
 
@@ -77,11 +65,3 @@ class Lexer(object):
     def next_token(self):
         # if you call this past the "EOF" token you will get a StopIteration exception
         return self._token_generator.__next__()
-
-
-# lexer = Lexer('input.txt')
-# while True:
-#     token = lexer.next_token()
-#     print(token.value, ", ", token.type)
-#     if token.type == 'EOF':
-#         break
