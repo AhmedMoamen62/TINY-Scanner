@@ -22,6 +22,8 @@ class Lexer(object):
     IDENTIFIER = r'(?P<IDENTIFIER>[a-z]+)'
     NUMBER = r'(?P<NUMBER>\d+)'
     SEMICOLON = r'(?P<SEMICOLON>;)'
+    LEFT_PAREN = r'(?P<LEFT_PAREN>\()'
+    RIGHT_PAREN = r'(?P<RIGHT_PAREN>\))'
 
     regex = re.compile('|'.join([
         WHITESPACE,
